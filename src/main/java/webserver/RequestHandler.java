@@ -27,17 +27,20 @@ public class RequestHandler extends Thread {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in)); //UTF-8 설정
             List<String> request = new ArrayList<>();
-            while(true) {
-                String line = br.readLine();
-                if(line.equals("")) {
-                    break;
-                }
+            String line = br.readLine();
+            log.debug("request line: {}", line);
+            if (line == null) {
+                return;
+            }
+            while (!line.equals("")) {
+                line = br.readLine();
+                log.debug("header : {}", line);
                 request.add(line);
             }
 
             String url = "";
             for (int i = 0; i < request.size(); i++) {
-                if(i==0) {
+                if (i == 0) {
                     String[] requestHeader = request.get(i).split(" ");
                     url = requestHeader[1];
                 }
