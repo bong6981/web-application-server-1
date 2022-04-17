@@ -26,29 +26,22 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in)); //UTF-8 설정
-            List<String> request = new ArrayList<>();
             String line = br.readLine();
             log.debug("request line: {}", line);
             if (line == null) {
                 return;
             }
+
+            String[] splited = line.split(" ");
+            String path = splited[1];
+            log.debug("request path : {}", path);
+
             while (!line.equals("")) {
                 line = br.readLine();
                 log.debug("header : {}", line);
-                request.add(line);
             }
 
-            String url = "";
-            for (int i = 0; i < request.size(); i++) {
-                if (i == 0) {
-                    String[] requestHeader = request.get(i).split(" ");
-                    url = requestHeader[1];
-                }
-            }
-            System.out.println("url = " + url);
-            byte[] body = Files.readAllBytes(new File("./webapp" + url).toPath());
-//            System.out.println(Arrays.toString(bytes));
-
+            byte[] body = Files.readAllBytes(new File("./webapp" + path).toPath());
 
             DataOutputStream dos = new DataOutputStream(out);
 //            byte[] body = "Hello World".getBytes();
